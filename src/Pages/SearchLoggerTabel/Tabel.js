@@ -21,54 +21,69 @@ function LoggerTabel() {
         const pagedArray = loggerData.slice(event.selected * 10, (event.selected + 1) * 10)
         setPagedLogger(pagedArray);
     }
-    const sortLogid = () =>{
+    const sortLogid = () => {
         const sortArray = pagedLogger.sort((a, b) => (a.logId > b.logId) ? 1 : -1)
         setPagedLogger([...sortArray]);
     }
-    const sortApplicationType = () =>{
+    const sortApplicationType = () => {
         const sortArray = pagedLogger.sort((a, b) => (a.applicationType > b.applicationType) ? 1 : -1)
         setPagedLogger([...sortArray]);
     }
-    const sortApplicationId = () =>{
+    const sortApplicationId = () => {
         const sortArray = pagedLogger.sort((a, b) => (a.applicationId > b.applicationId) ? 1 : -1)
         setPagedLogger([...sortArray]);
     }
-    const sortAction = () =>{
+    const sortAction = () => {
         const sortArray = pagedLogger.sort((a, b) => (a.actionType > b.actionType) ? 1 : -1)
         setPagedLogger([...sortArray]);
     }
-    const sortDateTime = () =>{
+    const sortDateTime = () => {
         const sortArray = pagedLogger.sort((a, b) => (a.creationTimestamp > b.creationTimestamp) ? 1 : -1)
         setPagedLogger([...sortArray]);
         // console.log(sortArray);
     }
-    
-    const [filter, setFilter] = useState({startDate:"",endDate:"",applicationId:""})
-    
-    const filterbtnClick = () =>{
+
+    const [filter, setFilter] = useState({ startDate: "", endDate: "", applicationId: "" })
+
+    const filterbtnClick = () => {
         console.log(filter);
-        debugger
-        
-        let filteredLog = [];
-        if (new Date(filter.startDate)){
-            filteredLog = pagedLogger.filter(log=>new Date(log.creationTimestamp)>=new Date(filter.startDate))
-            console.log(filteredLog);
-        };
-        if (new Date(filter.endDate)){
-            filteredLog = filteredLog.filter(log=>new Date(log.creationTimestamp)<=new Date(filter.endDate))
-            console.log(filteredLog);
-        };
-        if (filter.applicationId){
-            filteredLog = filteredLog.filter(x=>x.applicationId===+filter.applicationId)
-            console.log(filteredLog);
-        };
-        
-        // const filteredLog =  pagedLogger.filter((log) => {
-        //     if ((new Date(log.creationTimestamp)>=new Date(filter.startDate) && new Date(log.creationTimestamp)<=new Date(filter.endDate)) || log.applicationId===filter.applicationId)
-        //     return log;
-        //     else return false;
-        // })
-        setPagedLogger([...filteredLog]);
+        const filteredLog = loggerData.filter(log => {
+
+            const evr = Object.entries(filter).filter(([key, value]) => {
+                return !!value
+            })
+            return evr.every(([key, value]) => {
+
+
+                if (key === 'startDate') {
+                    const logDate = new Date(log.creationTimestamp);
+                    logDate.setHours(0, 0, 0, 0)
+                    const filterDate = new Date(value);
+                    filterDate.setHours(0, 0, 0, 0)
+
+                    console.log({ key, value, logValue: logDate, 'startDate': logDate >= filterDate })
+                    return logDate >= filterDate
+                }
+                else if (key === 'endDate') {
+                    const logDate = new Date(log.creationTimestamp);
+                    logDate.setHours(0, 0, 0, 0)
+                    const filterDate = new Date(value);
+                    filterDate.setHours(0, 0, 0, 0)
+
+                    return logDate <= filterDate
+                }
+                else if (key === 'applicationId') {
+                    return log[key] === +value
+                }
+                else
+                    return false;
+
+            })
+        })
+        const filteredSlice = filteredLog.slice(0, 10);
+        // console.log('b', b);
+        setPageCount(filteredLog.length / 10);
+        setPagedLogger([...filteredSlice]);
     }
 
     return (
@@ -95,25 +110,25 @@ function LoggerTabel() {
                     </div>
                     <div className="inputCol">
                         <label htmlFor="startDate">From Date</label>
-                        <input type="date" className='customField' id="startDate" value={filter.startDate} 
-                            onChange={(event)=>{
-                                setFilter({...filter,startDate:event.target.value})
+                        <input type="date" className='customField' id="startDate" value={filter.startDate}
+                            onChange={(event) => {
+                                setFilter({ ...filter, startDate: event.target.value })
                             }}
-                        placeholder='Select date' />
+                            placeholder='Select date' />
                     </div>
                     <div className="inputCol">
                         <label htmlFor="endDate">To Date</label>
                         <input type="date" className='customField' id="endDate" value={filter.endDate}
-                            onChange={(event)=>{
-                                setFilter({...filter,endDate:event.target.value})
+                            onChange={(event) => {
+                                setFilter({ ...filter, endDate: event.target.value })
                             }}
-                        placeholder='Select date' />
+                            placeholder='Select date' />
                     </div>
                     <div className="inputCol">
                         <label htmlFor="#">Application ID</label>
-                        <input type="text" className='customField' value={filter.applicationId} 
-                            onChange={(event)=>{
-                                setFilter({...filter,applicationId:event.target.value}) 
+                        <input type="text" className='customField' value={filter.applicationId}
+                            onChange={(event) => {
+                                setFilter({ ...filter, applicationId: event.target.value })
                             }} placeholder='e.d.219841/2021' />
                     </div>
                     <div className="btnHolder">
