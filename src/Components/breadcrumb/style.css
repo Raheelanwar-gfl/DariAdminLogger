@@ -1,0 +1,22 @@
+.breadcrumbs {
+	font-size: 12px;
+	line-height: 1.5;
+	color: #8C9099;
+	padding: 1rem 0;
+	font-weight: 500;
+	border-bottom: 1px solid var(--border-color);
+}
+.breadcrumbs ol {
+	display: flex;
+	align-items: center;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+
+}
+.breadcrumbs ol li a {
+	color: var(--blue-color);
+}
+.breadcrumbs ol li .icon {
+	display: block;
+}
